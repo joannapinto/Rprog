@@ -1,0 +1,441 @@
+R Programs
+
+1)Program for Data Regression
+• Read a dataset from a CSV file and perForm exploratory data analysis including summary statistics, data visualization and identifying missing values.
+• Clean the data by removing duplicate, handling missing values, and transforming variables if necessary.
+• Perform data manipulation operations such as filtering, sorting and merging dataset based on certain criteria.
+• Conduct statistical analysis such as hypothesis testing or correlation analysis to derive insights from the data.
+• Generate reports or visualizations to prevent the analysis result.
+
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+
+# Step 1: Read dataset from CSV file
+file_path <- "/Users/Joanna letica Pinto/OneDrive/Desktop/R/train.csv"
+data <- read.csv(file_path)
+
+# Step 2: Exploratory Data Analysis (EDA)
+# Summary statistics 
+summary_stats <- summary(data)
+print(summary_stats)
+
+# Data visualization
+# For example, let's create a histogram for age
+print(ggplot(data, aes(x = Age)) +
+        geom_histogram(binwidth = 5, fill = "blue", color = "black") +
+        labs(title = "Distribution of Age on Titanic",
+             x = "Age",
+             y = "Frequency"))
+
+print(ggplot(data, aes(x = factor(Survived), fill = factor(Survived))) +
+        geom_bar() +
+        labs(title = "Number of Survivors on Titanic",
+             x = "Survived",
+             y = "Count") +
+        scale_fill_manual(values = c("red", "green")))
+
+
+# Identifying missing values
+missing_values <- colSums(is.na(data))
+print(missing_values)
+
+# Cleaning the data
+# Remove duplicates
+data <- distinct(data)
+
+# Removing missing values
+data$Age[is.na(data$Age)] <- mean(data$Age, na.rm = TRUE)
+missing_values <- colSums(is.na(data))
+print(missing_values)
+
+# Data manipulation operations
+# Filtering: Select passengers with age greater than 18
+adult_passengers <- filter(data, Age > 18)
+
+# Sorting: Sort data by Fare in descending order
+sorted_titanic <- arrange(data, desc(Fare))
+
+# Merging datasets (if applicable)
+# Example: If you have another dataset named "additional_data"
+file_path <- "/Users/Joanna letica Pinto/OneDrive/Desktop/R/attach.csv"
+A <- read.csv(file_path)
+
+# Check column names in both datasets
+print(colnames(data))
+print(colnames(A))
+
+# Merge based on 'PassengerId'
+merged_data <- merge(data, A, by.x = "PassengerId", by.y = "PassengerId")
+print(merged_data )
+
+# Statistical analysis
+# Example: Hypothesis testing (t-test)
+# Check the assumptions (visualize the distribution of ages for each group)
+print(boxplot(Age ~ Survived, data = data, col = c("red", "blue"), main = "Boxplot of Age by Survived"))
+
+# Conduct t-test
+t_test_result <- t.test(Age ~ Survived, data = data)
+
+# Print the t-test result
+print(t_test_result)
+
+# Calculate the correlation coefficient between 'Age' and 'Fare'
+correlation_coefficient <- cor(data$Age, data$Fare)
+
+# Print the result
+print(correlation_coefficient)
+
+
+
+
+2)Program for Linear Regression
+• Read a dataset from a CSV file that contains variables for independent and dependent variables.
+• Perform linear regression analysis to model the relationship b/t the variable
+• Calculate the coefficient and interupt of the regression model
+• Evaluate the models goodness-of-fit using metric like R-squared and adjusted R-square.
+• Plot the regression line and residual to visualize the relationship b/t the variable.
+
+
+a)
+library(ggplot2)
+library(dplyr)
+
+# Read the dataset from CSV file
+data <- read.csv("/Users/Joanna letica Pinto/OneDrive/Desktop/R/marks.csv")  # Replace "your_dataset.csv" with the actual filename
+
+# Check for missing values
+sum(is.na(data))
+
+# Remove rows with missing values
+data <- na.omit(data)
+
+# Perform linear regression
+lm_model <- lm(External~ Internal, data = data)
+
+# Print coefficients and intercept
+print(coef(lm_model))
+print(coef(lm_model)[1])  # This prints the intercept
+
+# Evaluate the model's goodness-of-fit
+summary(lm_model)
+
+# Plot regression line and residuals
+print(ggplot(data, aes(x = Internal, y = External)) +
+        geom_point() +
+        geom_smooth(method = "lm", se = FALSE, color = "blue") +
+        ggtitle("Linear Regression Analysis: External Marks vs Internal Marks") +
+        xlab("Internal Marks") +
+        ylab("External Marks") +
+        theme_minimal())
+
+# Plot residuals
+print(ggplot(data, aes(x = fitted(lm_model), y = residuals(lm_model))) +
+        geom_point() +
+        geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+        ggtitle("Residuals Plot") +
+        xlab("Fitted values") +
+        ylab("Residuals") +
+        theme_minimal())
+
+b)
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+
+# Read the dataset from CSV file
+titanic <- read.csv("/Users/Joanna letica Pinto/OneDrive/Desktop/R/train.csv")
+
+# Check for missing values
+sum(is.na(titanic))
+
+# Remove rows with missing values
+titanic <- na.omit(titanic)
+
+# Perform linear regression
+lm_model <- lm(Age ~ Fare + Pclass, data = titanic)
+
+# Print coefficients and intercept
+print(coef(lm_model))
+print(coef(lm_model)[1])  # This prints the intercept
+
+# Evaluate the model's goodness-of-fit
+summary(lm_model)
+
+# Plot regression line and residuals
+print(ggplot(titanic, aes(x = Fare, y = Age)) +
+        geom_point() +
+        geom_smooth(method = "lm", se = FALSE, color = "blue") +
+        ggtitle("Linear Regression Analysis: Age vs Fare") +
+        xlab("Fare") +
+        ylab("Age") +
+        theme_minimal())
+
+# Plot residuals
+print(ggplot(titanic, aes(x = fitted(lm_model), y = residuals(lm_model))) +
+        geom_point() +
+        geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+        ggtitle("Residuals Plot") +
+        xlab("Fitted values") +
+        ylab("Residuals") +
+        theme_minimal())
+
+
+
+
+3)Program for Web Scraping and Data Extraction: Use R packages like rvest or httr to 
+scrape data from a specific website or API.
+• Define the target website or API endpoints and specify the data to be extracted.
+• Retrieve the HTML content or JSON response from the website or API.
+• Parse and extract the desired data using CSS selectors, XPath, or JSON parsing 
+techniques.
+• Save the extracted data to a file or perform further analysis on it.
+
+
+# Load necessary libraries
+library(rvest)
+
+# Specify the URL of the website to scrape
+url <- "http://books.toscrape.com/"
+
+# Download the HTML content
+html_content <- read_html(url)
+
+# Define XPath selectors to extract data
+title_xpath <- '/html/body/div/div/div/div/section/div[2]/ol/li/article/h3/a'
+price_xpath <- '/html/body/div/div/div/div/section/div[2]/ol/li/article/div[2]/p[1]'
+
+# Extract data using XPath selectors
+titles <- html_content %>%
+  html_nodes(xpath = title_xpath) %>%
+  html_text() %>%
+  trimws() # Remove leading/trailing whitespaces
+
+prices <- html_content %>%
+  html_nodes(xpath = price_xpath) %>%
+  html_text() %>%
+  trimws() # Remove leading/trailing whitespaces
+
+# Combine the extracted data into a data frame
+book_data <- data.frame(Title = titles, Price = prices)
+
+# Print the extracted data
+print(book_data)
+
+# Save the extracted data to a CSV file
+write.csv(book_data, "book_data.csv", row.names = FALSE)
+
+
+
+
+4)Program for Web Scraping and Data Extraction:
+• Install and Load Required Packages:
+   o Install the necessary packages for web scraping, such as rvest, xml2, and httr.
+   o Load the packages into your R environment using the library() function.
+• Specify the Target Website and URL:
+   o Identify the website you want to scrape data from.
+   o Define the URL of the specific webpage or API endpoint containing the data you need. 
+• Send HTTP Requests and Handle Authentication (if required):
+   o Use the GET() or POST() functions from the httr package to send HTTP requests to the 
+     website.
+   o Set headers, parameters, or authentication credentials as needed.
+• Retrieve HTML Content and Parse XML/HTML:
+   o Use the GET() function to retrieve the HTML content of the webpage.
+   o Parse the HTML content using the read_html() function from the rvest package.
+• Extract Data from HTML:
+   o Inspect the HTML structure of the webpage to identify the elements and attributes 
+   containing the desired data.
+   o Use functions such as html_nodes() and html_text() from the rvest package to extract 
+   specific elements or text from the HTML content.
+   o Apply CSS selectors or XPath expressions to target specific elements. 
+• Perform Data Cleaning and Transformation:
+   o Clean the extracted data by removing unwanted characters, handling missing values, or 
+   applying regular expressions.
+   o Convert the extracted data into appropriate data structures (e.g., data frames, lists, or 
+   vectors) for further analysis or storage. 
+• Save or Analyse the Extracted Data:
+   o Save the extracted data to a file (e.g., CSV or Excel) using R functions like write.csv() or 
+   write.xlsx().
+   o Perform further data analysis or visualization on the extracted data using appropriate R 
+   packages and techniques.
+
+# Install and Load Required Packages
+#install.packages(c("rvest", "xml2", "httr"))
+library(rvest)
+library(xml2)
+library(httr)
+
+# Define the URL
+#url <- "https://www.example.com"
+# If authentication is required, set your username and password
+#username <- "your_username"
+#password <- "your_password"
+# Send a GET request
+#response <- GET(url, authenticate(username, password))
+# Specify the Target Website and URL
+url <-"https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_and_their_capitals_in_native_languages"
+
+# Send HTTP Requests and Handle Authentication (if required)
+response <- tryCatch(GET(url), error = function(e) e)
+
+# Check if connection was successful
+if (!inherits(response, "error")) {
+  cat("Successfully connected to the website.\n")
+  
+  # Retrieve HTML Content and Parse XML/HTML
+  html_content <- read_html(response$content, encoding = "UTF-8")
+  
+  # Extract Data from HTML
+  # Extracting country names
+  countries <- html_content %>%
+    html_nodes(".wikitable tbody tr td:nth-child(2)") %>%
+    html_text()
+  
+  # Extracting capital names
+  capitals <- html_content %>%
+    html_nodes(".wikitable tbody tr td:nth-child(3)") %>%
+    html_text()
+  
+  # Perform Data Cleaning and Transformation
+  # Remove unnecessary elements like references and decode HTML entities
+  clean_countries <- gsub("\\[.*?\\]", "", countries)
+  clean_countries <- gsub("&nbsp;", " ", clean_countries)
+  
+  clean_capitals <- gsub("\\[.*?\\]", "", capitals)
+  clean_capitals <- gsub("&nbsp;", " ", clean_capitals)
+  
+  # Remove Unicode characters and symbols
+  clean_countries <- enc2utf8(iconv(clean_countries, "UTF-8", "ASCII", sub = " "))
+  clean_capitals <- enc2utf8(iconv(clean_capitals, "UTF-8", "ASCII", sub = " "))
+  
+  # Combine data into a data frame
+  country_capitals <- data.frame(Country = clean_countries, Capital = clean_capitals)
+  
+  # Save or Analyze the Extracted Data
+  # Save the extracted data to a CSV file
+  write.csv(country_capitals, file = "country_capitals.csv", row.names = FALSE)
+} else {
+  cat("Failed to connect to the website. Please check your internet connection or the URL.\n")
+}
+
+
+
+
+6)Program for Data Manipulation:
+• Read multiple datasets from different files or sources.
+• Merge or join the datasets based on common variables or keys.
+• Perform aggregation operations, such as calculating sums, means, or counts, by groups
+or categories.
+• Filter the data based on specific conditions or criteria.
+• Create new variables or transform existing variables using functions or mathematical
+operations. 
+
+# Load necessary libraries
+library(dplyr)
+
+# Read datasets from different files or sources
+dataset1 <- read.csv("/Users/Joanna letica Pinto/OneDrive/Desktop/R/sales.csv")
+dataset2 <- read.csv("/Users/Joanna letica Pinto/OneDrive/Desktop/R/salary.csv")
+
+# Merge or join datasets based on common variables or keys
+merged_data <- merge(dataset1, dataset2, by = "ID")
+
+# Perform aggregation operations by groups or categories
+aggregated_data <- merged_data %>%
+  group_by(Gender) %>%
+  summarise(
+    total_salary = sum(Salary),
+    average_age = mean(Age),
+    count = n()
+  )
+
+# Filter the data based on specific conditions or criteria
+filtered_data <- merged_data %>%
+  filter(Age > 25)
+
+# Create new variables or transform existing variables using functions or mathematical operations
+transformed_data <- merged_data %>%
+  mutate(
+    doubled_salary = Salary * 2,
+    seniority = ifelse(Age > 28, "Senior", "Junior")
+  )
+
+# Print the results
+print("Merged Data:")
+print(merged_data)
+print("Aggregated Data:")
+print(aggregated_data)
+print("Filtered Data:")
+print(filtered_data)
+print("Transformed Data:")
+print(transformed_data)
+
+
+
+
+7) SAMW QUESTION AS 6
+
+# Load necessary library
+library(dplyr)
+
+# Read datasets
+sales_data <- read.csv("/Users/Joanna letica Pinto/OneDrive/Desktop/R/sales_new.csv")
+customer_data <- read.csv("/Users/Joanna letica Pinto/OneDrive/Desktop/R/customer.csv")
+
+# Print the datasets
+print("Sales Data:")
+print(sales_data)
+print("Customer Data:")
+print(customer_data)
+
+# Merge datasets based on common variable
+merged_data <- merge(sales_data, customer_data, by.x = "Name", by.y = "Name", all = TRUE)
+
+# Calculate total sales amount
+merged_data <- merged_data %>%
+  mutate(Total_Sales = Quantity * Price)
+
+# Calculate total sales amount by country
+sales_by_country <- merged_data %>%
+  group_by(Country) %>%
+  summarise(Total_Sales = sum(Total_Sales))
+
+# Filter data for USA customers
+usa_customers <- merged_data %>%
+  filter(Country == "USA")
+
+# Print the results
+print("Merged Data:")
+print(merged_data)
+print("Sales by Country:")
+print(sales_by_country)
+print("USA Customers:")
+print(usa_customers)
+
+
+
+explain the following terms:
+Rlanguage
+dpylr
+tidyr
+httr
+rvest
+xml2
+ggplot2
+gsub
+rm
+%>%
+gsub
+$
+xpath
+theme minimaL
+geom_smooth
+coef((lm_model)[1])
+is.na
+Age~Survived
+
+
+
+
+
+
