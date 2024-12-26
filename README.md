@@ -8,6 +8,5 @@ Download RStudio: Visit [RStudio](https://posit.co/download/rstudio-desktop/) an
 Install RStudio: Run the installer and follow the prompts.
 
 3. Write Your R Program
-Launch RStudio for a user-friendly experience.
 In RStudio, go to File > New File > R Script.
 Paste Code, save and run.
